@@ -40,16 +40,16 @@ w[16:80,16:80] = w[16:80,16:80]*0.8
 
 print(np.nonzero(w)[0].shape)
 
-T =6500
+T =3000
 dt = 0.0125
 import network_gen
-# w = network_gen.small_world_network(80,10,0)
-# w = w
-# w = np.array(w)
-#np.savetxt('Ach_1.txt',w)
-w = np.loadtxt('Ach_1.txt')
+w = network_gen.small_world_network(80,15,0.5)
+w = w
+w = np.array(w)
+np.savetxt('small_world_W.txt',w)
+# w = np.loadtxt('Ach_1.txt')
 # print(np.sum(w))
-ratio=6100/np.sum(w)
+ratio=5500/np.sum(w)
 w = w*ratio
 
 # n = 100
@@ -59,6 +59,7 @@ w = w*ratio
 # w[0,:]=np.arange(0,0.2,0.002)
 # w = w.T*10
 # network = re.network(neuron_number=n,type=np.ones(shape=n),w=w,dt=dt,external_W=None)
+# w = np.zeros_like(w)
 
 network = re.network(neuron_number=n,type=Type,w=w,dt=dt,external_W=None)
 
@@ -75,16 +76,18 @@ sayrate = []
 satge = []
 mK = []
 spike_array = []
-background_input = np.arange(80,240,2)
+background_input = np.zeros(n)
 
-
+print('50***')
 for i in range(step):
     #print(i)
+    if i == 50 / dt:
+        print('50')#
 
 
-    #if  50.025/dt >i > 50/dt :
+    #if  50/dt <i < 550/dt :
     if  i == 50 / dt :
-        print('50***')
+
         network.background_input = np.zeros(shape=n)
         network.background_input[0] = 100/dt
     # elif i == 200/dt:
@@ -129,11 +132,11 @@ voltage = np.array(voltage)
 spike = network.spike_record_scatter
 spike = np.array(spike)
 spike_array = np.array(spike_array)
-np.savetxt('Ach_array.txt',spike_array)
+np.savetxt('small_world_array.txt',spike_array)
 mK = np.array(mK)
 Ca = np.array(Ca)
 #np.savetxt('reverbrtarion_spike_6000ms_2_stdp.txt',spike)
-np.savetxt('Ach_spike.txt',spike)
+np.savetxt('small_world.txt',spike)
 say = np.array(network.asynrate)
 print(say.shape)
 print(spike)

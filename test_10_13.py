@@ -3,26 +3,74 @@ import numpy as np
 from scipy import stats
 import math
 import pandas as pd
-data_1 = np.array([260925,296296,299490])
-data_2 = np.array([356846,338160,292290])
+data_0 = np.array(
+    [
+318046,
+315573,
+321017,
+304790,
+372767,
+
+311894,
+303780
+
+
+
+
+    ]
+)*0.0125
+data_1 = np.array([307263,
+300547,
+371554,
+342318,
+335241,
+328635,
+324150,
+338215
+
+
+
+
+])*0.0125
+data_2 = np.array([322581,
+323837,
+306339,
+305075,
+303732,
+322913,
+322309
+
+
+
+
+])*0.0125
+data_3 = np.array([
+307466,
+295292,
+305653,
+281254,
+280097,
+319970,
+267692
+
+
+
+])*0.0125
 data = [
-    [260925,296296,299490],
-    [356846,338160,292290]
+    data_0,data_1,data_2,data_3
 ]
-data = np.array(data)
-df = pd.DataFrame(data.T,columns=['ctrl','epsc_down'])
+
 a =stats.levene(data_1, data_2)
 b = stats.ttest_ind(data_1,data_2,equal_var=True)
 plt.figure()
-f = df.boxplot(sym = 'o',            #异常点形状
-               vert = True,          # 是否垂直
-               whis=1.5,             # IQR
-               patch_artist = True,  # 上下四分位框是否填充
-               meanline = False,showmeans = True,  # 是否有均值线及其形状
-               showbox = True,   # 是否显示箱线
-               showfliers = True,  #是否显示异常值
-               notch = False,    # 中间箱体是否缺口
-               return_type='dict')  # 返回类型为字典
+plt.boxplot(x = data,
+            labels = ['0.19','0.2','0.22','0.25'], # 添加具体的标签名称
+            showmeans=True,
+            patch_artist=True,
+            boxprops = {'color':'black','facecolor':'#9999ff'},
+            flierprops = {'marker':'o','markerfacecolor':'red','color':'black'},
+            meanprops = {'marker':'D','markerfacecolor':'indianred'},
+            medianprops = {'linestyle':'--','color':'orange'})
 
 plt.title('duration')
 plt.show()

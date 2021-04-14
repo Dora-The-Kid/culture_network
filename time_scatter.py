@@ -4,11 +4,12 @@ import networkx  as nx
 from scipy import fftpack
 from scipy import signal
 
-data = np.loadtxt('Ach_spike.txt')
-W = np.loadtxt('strangr_1_2.txt')
-data_array = np.loadtxt('Ach_array.txt')
+data = np.loadtxt('small_world.txt')
+W = np.loadtxt('small_world_W.txt')
+data_array = np.loadtxt('small_world_array.txt')
 plt.figure()
 plt.scatter(data[:,0],data[:,1],cmap='viridis',linewidth=0.5,color="k",marker='.',s=9,alpha=0.5)
+
 
 spike_onetime = []
 spike_totall = []
@@ -16,10 +17,13 @@ spike_totall = []
 # print(data_array[int(50/0.0125 +123):int(50/0.0125 +128),:])
 # print(len(np.nonzero(data_array[int(50/0.0125 +123):int(50/0.0125 +123)+ 1600 ,:])[0]) )
 index = np.where(data_array.any(axis=1))[0]
+singelindex = np.argwhere(data_array[:,5] ==1)
+singeldifference = singelindex[1:]- singelindex[0:-1]
 
+print(singeldifference)
 difference = index[1:]- index[0:-1]
 difference = np.array(difference)
-space = np.argwhere(difference>100)
+space = np.argwhere(difference>120)
 print(space)
 final = index[np.vstack((space,[[len(index)-1]]))]
 start = index[np.vstack(([[0]],space+1))]
@@ -31,12 +35,13 @@ print(len(start)+1)
 
 mid = index[np.rint((space + np.vstack(([[0]],np.delete(space,-1,0)+1)))/2).astype('int')]
 average_fire_time = np.average(final[5:30]-start[5:30])
-average_wating_time = np.average(start[6:31]-final[5:30])
+average_wating_time = np.average(start[6:31]-final[5:30])#群体发放间隔
 total = final[-1]-start[0]
-print('fire,wait，total,time',average_fire_time,average_wating_time,total,len(start)+1)
+singel_space = np.average(singeldifference[5:31])#单个神经元发放间隔
+print('fire,wait，total,time,single_space',average_fire_time,average_wating_time,total,len(start)+1,singel_space)
 
-plt.vlines(final[-1]*0.0125,ymax=80,ymin=0,color = 'r',alpha = 0.5)
-plt.vlines(start[0]*0.0125,ymax=80,ymin=0,color = 'b',alpha = 0.5)
+plt.vlines(final*0.0125,ymax=80,ymin=0,color = 'r',alpha = 0.5)
+plt.vlines(start*0.0125,ymax=80,ymin=0,color = 'b',alpha = 0.5)
 plt.show()
 spike_group = {}
 spike_group_arry = np.zeros(shape=(len(mid),int(40/0.0125),data_array.shape[1]))
@@ -49,8 +54,10 @@ for i in range(len(mid)):
     for j in range(spike_group[i].shape[1]):
 
         spike_group[i][:,j] = np.convolve(spike_group[i][:,j],np.ones(160)/160,'same')
+        print(spike_group[i][:,j])
 
-        spike_group[i][:,j] = (spike_group[i][:,j] - np.mean(spike_group[i][:,j])) / (np.std(spike_group[i][:,j]) * len(spike_group[i][:,j]))
+        # spike_group[i][:,j] = (spike_group[i][:,j] - np.mean(spike_group[i][:,j])) / (np.std(spike_group[i][:,j]) * len(spike_group[i][:,j]))
+
 
 
 print('spikegrouparray',np.where(np.where(spike_group_arry == 1)[2] == 2))
@@ -72,31 +79,31 @@ print(np.where(spike_group_arry == 1)[1][np.where(np.where(spike_group_arry == 1
 
 
 
-def cxcorr(a,v):
-    return np.corrcoef(a,v)[0,1]
-cor = np.zeros(shape=(len(spike_group.keys()),len(spike_group.keys()),spike_group[0].shape[1]))
-for i in spike_group.keys():
-    for h in spike_group.keys():
-        for k in range(spike_group[i].shape[1]):
-            cor[i,h,k] = cxcorr(spike_group[i][:,k],spike_group[h][:,k])
-
-print(cor[:,:,0])
-
+# def cxcorr(a,v):
+#     return np.corrcoef(a,v)[0,1]
+# cor = np.zeros(shape=(len(spike_group.keys()),len(spike_group.keys()),spike_group[0].shape[1]))
+# for i in spike_group.keys():
+#     for h in spike_group.keys():
+#         for k in range(spike_group[i].shape[1]):
+#             cor[i,h,k] = cxcorr(spike_group[i][:,k],spike_group[h][:,k])
+#
+# print(cor[:,:,0])
+#
 import seaborn as sns
-plt.figure()
-sns.set()
-yticklabels =yticks = np.linspace(0,10,1)/50
-C = cor[:,:,69]
-#C = (C - np.mean(C))/np.var(C)
-ax = sns.heatmap(C, annot=False,center=0.75,cmap='YlGnBu',vmin=0.5,vmax=1)
-ax.set_ylim(50, 0)
-ax.set_xlim(0,50)
-plt.title('correlation',fontsize='large',fontweight='bold')
+# plt.figure()
+# sns.set()
+# yticklabels =yticks = np.linspace(0,10,1)/50
+# C = cor[:,:,69]
+# #C = (C - np.mean(C))/np.var(C)
+# ax = sns.heatmap(C, annot=False,center=0.75,cmap='YlGnBu',vmin=0.5,vmax=1)
+# ax.set_ylim(50, 0)
+# ax.set_xlim(0,50)
+# plt.title('correlation',fontsize='large',fontweight='bold')
 
 
-plt.figure()
-plt.plot(np.arange(spike_group[0].shape[0]),spike_group[0][:,2],color = 'b')
-plt.plot(np.arange(spike_group[2].shape[0]),spike_group[2][:,2],color = 'r')
+# plt.figure()
+# plt.plot(np.arange(spike_group[0].shape[0]),spike_group[0][:,2],color = 'b')
+# plt.plot(np.arange(spike_group[2].shape[0]),spike_group[2][:,2],color = 'r')
 #print('*******',np.corrcoef(spike_group[0][:,2],spike_group[5][:,2]))
 
 # plt.show()
@@ -188,12 +195,12 @@ for i in range(0,80,8):
     ax[int(i/8)].bar(np.arange(spiketime.shape[1])[1200:2500],np.sum(spiketime,axis=0)[1200:2500],width=1,color = 'b', edgecolor='b')
 
 
-data = np.loadtxt('normal_3_1_spike.txt')
-plt.figure()
-G = nx.DiGraph()
-G.add_nodes_from(np.arange(0,80))
-G.add_weighted_edges_from(weight)
-nx.draw(G, with_labels=True)
+data = np.loadtxt('small_world.txt')
+# plt.figure()
+# G = nx.DiGraph()
+# G.add_nodes_from(np.arange(0,80))
+# G.add_weighted_edges_from(weight)
+# nx.draw(G, with_labels=True)
 
 plt.figure()
 
