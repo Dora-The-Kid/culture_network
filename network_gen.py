@@ -18,10 +18,10 @@ def small_world_network(n,k,p):
 
     for i in range(n):
         from_node = i
-        for j in range(k):
-            to_node = (i + j) % n - k
-            if to_node <= 0:
-                to_node = 1+to_node
+        for j in range(1,k+1):
+            to_node = i + j
+            if to_node >= n:
+                to_node =to_node-n
             G.add_edge(from_node, to_node)
     print(G.edges)
     print(G.nodes)
@@ -44,6 +44,8 @@ def small_world_network(n,k,p):
 
     for u, v in G.edges:
         G.add_edge(u, v, weight=np.random.normal(2.5, 1))
+        #G.add_edge(u, v, weight=1)
+
 
     ps = nx.circular_layout(G)
 
@@ -69,10 +71,10 @@ def small_world_network(n,k,p):
     ax.set_ylim(81, 0)
     ax.set_xlim(0,81)
     plt.savefig("network_fig.png")
-    plt.show()
+    #plt.show()
     return W
 
 
 
 if __name__ == '__main__':
-    small_world_network(60,15,0.2)
+    small_world_network(10,2,0)

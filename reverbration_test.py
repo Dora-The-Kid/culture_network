@@ -37,19 +37,20 @@ w[16:80,16:80] = w[16:80,16:80]*0.8
 #w[5,0] = 10
 # w[4,0] = 2.2
 # w[:,4] = 2
-
+#np.savetxt('second_spike.txt',W)
 print(np.nonzero(w)[0].shape)
 
 T =3000
 dt = 0.0125
 import network_gen
-w = network_gen.small_world_network(80,15,0.5)
+#w = network_gen.small_world_network(80,16,1)
 w = w
 w = np.array(w)
-np.savetxt('small_world_W.txt',w)
-# w = np.loadtxt('Ach_1.txt')
+#np.savetxt('random_network_W.txt',w)
+w = np.loadtxt('Ach_1.txt')
+#w = np.loadtxt('Ach_1.txt')
 # print(np.sum(w))
-ratio=5500/np.sum(w)
+ratio=6300/np.sum(w)
 w = w*ratio
 
 # n = 100
@@ -76,6 +77,8 @@ sayrate = []
 satge = []
 mK = []
 spike_array = []
+I_input = []
+d_V = []
 background_input = np.zeros(n)
 
 print('50***')
@@ -85,7 +88,6 @@ for i in range(step):
         print('50')#
 
 
-    #if  50/dt <i < 550/dt :
     if  i == 50 / dt :
 
         network.background_input = np.zeros(shape=n)
@@ -103,7 +105,7 @@ for i in range(step):
 
 
     network.update()
-    #print(network.Y[:,0])
+
     V = network.V
     X.append(network.X[5,0])
     Y.append(network.Y[5,0])
@@ -119,6 +121,7 @@ for i in range(step):
 
     Ca.append(network.CaConcen)
     voltage.append(V)
+    d_V.append(network.dV)
     spike_array.append(network.spike_train_output)
 
     #print(network.dV)
@@ -127,20 +130,28 @@ for i in range(step):
 # np.savetxt('Y_1.txt',np.array(Y))
 # np.savetxt('Z_1.txt',np.array(Z))
 # np.savetxt('S_1.txt',np.array(S))
+
 print(np.sum(network.cortical_matrix))
 voltage = np.array(voltage)
+np.save('voltage_ACh',voltage)
+d_V = np.array(d_V)
 spike = network.spike_record_scatter
 spike = np.array(spike)
 spike_array = np.array(spike_array)
-np.savetxt('small_world_array.txt',spike_array)
+#np.savetxt('random_network.txt',spike_array)
 mK = np.array(mK)
 Ca = np.array(Ca)
 #np.savetxt('reverbrtarion_spike_6000ms_2_stdp.txt',spike)
-np.savetxt('small_world.txt',spike)
+#np.savetxt('random_network_spike.txt',spike)
 say = np.array(network.asynrate)
 print(say.shape)
 print(spike)
 print(spike.shape)
+plt.figure()
+plt.title('dV')
+plt.ylabel('V/mv')
+plt.xlabel('time/ms')
+plt.plot(np.arange(T/dt)*dt,-d_V[:,5], alpha = 0.3)
 plt.figure()
 plt.title('voltage')
 plt.ylabel('V/mv')
@@ -158,11 +169,11 @@ plt.ylabel('V/mv')
 plt.xlabel('time/ms')
 plt.figure()
 plt.plot(np.arange(T/dt)*dt,Ca[:,5], alpha = 0.3)
-plt.title('Ca_5')
+plt.title('Ca')
 plt.ylabel('concentration/mu mol')
 plt.xlabel('time/ms')
 plt.figure()
-plt.title('sayrate_5')
+plt.title('asynchronous release rate')
 plt.plot(np.arange(T/dt)*dt,sayrate, alpha = 0.3)
 plt.ylabel('Hz')
 plt.xlabel('time/ms')
@@ -222,8 +233,8 @@ plt.figure()
 sns.set()
 #ax = sns.heatmap(R)
 yticklabels =yticks = np.linspace(0,10,1)/50
-W = (w-np.average(w))/np.std(w)
-ax = sns.heatmap(W, annot=False,center=0.5,cmap='YlGnBu',vmin=0,vmax=1)
+#W = (w-np.average(w))/np.std(w)
+ax = sns.heatmap(w, annot=False,center=np.median(w),cmap='YlGnBu',vmin=np.min(w),vmax=np.max(w))
 ax.set_ylim(80, 0)
 ax.set_xlim(0,80)
 plt.title('befor',fontsize='large',fontweight='bold')

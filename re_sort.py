@@ -1,9 +1,9 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import copy
-data = np.loadtxt('small_world.txt')
-W = np.loadtxt('small_world_W.txt')
-data_array = np.loadtxt('small_world_array.txt')
+data = np.loadtxt('random_network_spike.txt')
+W = np.loadtxt('random_network_W.txt')
+data_array = np.loadtxt('random_network.txt')
 plt.figure()
 plt.scatter(data[:,0],data[:,1],cmap='viridis',linewidth=0.5,color="k",marker='.',s=9,alpha=0.5)
 plt.show()
@@ -28,7 +28,7 @@ singel_space = np.average(singeldifference[5:31])#单个神经元发放间隔
 #确定重排顺序
 print(data)
 data_1 =np.array(data[:,0])
-data_l =  [(i and j) for i, j in zip(data_1>int(1185), data_1<int(1195))]
+data_l =  [(i and j) for i, j in zip(data_1>int(1380), data_1<int(1400))]
 order = (data[data_l,1])
 #补齐
 if len(order)<data_array.shape[1]:
@@ -48,7 +48,9 @@ for i in range(len(data_2)):
 
 plt.figure()
 #plt.plot(np.arange(len(data[:,0])),data[:,0])
-plt.scatter(data[:,0],data_3,cmap='viridis',linewidth=0.5,marker='.',s=15,alpha=0.5,color='r')
-plt.scatter(data[:,0],data_2,cmap='viridis',linewidth=0.5,marker='.',s=15,alpha=0.5,color='b')
-
+#plt.scatter(data[:,0],data_3,cmap='viridis',linewidth=0.5,marker='.',s=60,alpha=1,color='r')
+plt.scatter(data[:,0],data_2,cmap='viridis',linewidth=0.5,marker='.',s=60,alpha=1,color='b')
+plt.title('spike scatter plot',fontsize='large', fontweight='bold')
+plt.xlabel('time/ms',fontsize='large', fontweight='bold')
+plt.ylabel('neuron number',fontsize='large', fontweight='bold')
 plt.show()

@@ -3,7 +3,7 @@ import math
 
 
 class network(object):
-    def __init__(self,neuron_number,type,dt,w,external_W):
+    def __init__(self,neuron_number,type,dt,w,external_W,dely_step):
         '''
 
         :param neuron_number:
@@ -18,7 +18,7 @@ class network(object):
         self.Maxnum_search = 100
         self.type = np.array(type)
         self.state = np.full(shape=self.n,fill_value=0)
-        self.GMAX = 50
+        self.GMAX = 10
         #cortical_matrix[index_neuron][synapse_index]
         self.cortical_matrix = np.array(w)
         self.STDP_RULE ='LOG_RULE'
@@ -90,6 +90,9 @@ class network(object):
         self.spike_train_output = np.zeros(shape=self.n)
 
         self.I_input = None
+
+        self.spike_delay_count = np.zeros(shape=self.n)
+        self.dely_step = dely_step+2
 
 
         #test
@@ -314,6 +317,7 @@ class network(object):
 
 
 
+
         return  spike_neuron,spike_index
 
     def get_fire_finished_neuron(self,V_pre,V_post):
@@ -506,8 +510,12 @@ class network(object):
 
 
 
-
         spike_neuron,spike_index = self.get_fired_neuron(self.V,nextV)
+        self.spike_delay_count[spike_index] = self.dely_step
+        self.spike_delay_count = self.spike_delay_count-1
+        self.spike_delay_count[self.spike_delay_count<0] = 0
+        print(self.spike_delay_count)
+
 
         spike_finished_neuron , spike_finished_index = self.get_fire_finished_neuron(self.V,nextV)
 
@@ -525,7 +533,8 @@ class network(object):
         if self.sike_train_input_flag ==True:
             self.spike_train_input()
 
-
+        spike_index = np.where(self.spike_delay_count == 1)[0]
+        print(spike_index)
         if len(spike_index):
             self.spike_train_output[spike_index] = 1
             self.spikeing_time(self.time, self.time + self.dt, spike_index, nextV, nextmK, nextge, nextCaConcen)

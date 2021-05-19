@@ -109,6 +109,7 @@ if __name__ == '__main__':
     phasearrows([-70,50],[0,1],0.01)
     rv1 = simulator(-26,0.1140,300,0.2,'r')
     rv2 = simulator(-26, 0.1134, 300, 0.2, 'b')
+
     plt.figure()
     plt.xlabel('time/ms')
     plt.ylabel('voltage/mv')
