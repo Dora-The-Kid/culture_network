@@ -520,6 +520,7 @@ class network(object):
         self.asynge = nextasynge
 
         self.spike_train_output = np.zeros(shape=self.n)
+        self.V[5] = -60
 
 
         if self.sike_train_input_flag ==True:

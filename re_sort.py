@@ -1,9 +1,9 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import copy
-data = np.loadtxt('random_network_spike.txt')
+data = np.load('spike_stdp.npy')
 W = np.loadtxt('random_network_W.txt')
-data_array = np.loadtxt('random_network.txt')
+data_array = np.load('spike_array_stdp.npy')
 plt.figure()
 plt.scatter(data[:,0],data[:,1],cmap='viridis',linewidth=0.5,color="k",marker='.',s=9,alpha=0.5)
 plt.show()
@@ -16,7 +16,7 @@ singelindex = np.argwhere(data_array[:,5] ==1)
 singeldifference = singelindex[1:]- singelindex[0:-1]
 difference = index[1:]- index[0:-1]
 difference = np.array(difference)
-space = np.argwhere(difference>120)#间隔大于多少判定为两个evevt
+space = np.argwhere(difference>200)#间隔大于多少判定为两个evevt
 final = index[np.vstack((space,[[len(index)-1]]))]
 start = index[np.vstack(([[0]],space+1))]
 mid = index[np.rint((space + np.vstack(([[0]],np.delete(space,-1,0)+1)))/2).astype('int')]
@@ -28,7 +28,7 @@ singel_space = np.average(singeldifference[5:31])#单个神经元发放间隔
 #确定重排顺序
 print(data)
 data_1 =np.array(data[:,0])
-data_l =  [(i and j) for i, j in zip(data_1>int(1380), data_1<int(1400))]
+data_l =  [(i and j) for i, j in zip(data_1>int(4165), data_1<int(4180))]
 order = (data[data_l,1])
 #补齐
 if len(order)<data_array.shape[1]:

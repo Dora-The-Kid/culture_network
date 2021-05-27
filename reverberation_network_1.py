@@ -18,10 +18,10 @@ class network(object):
         self.Maxnum_search = 100
         self.type = np.array(type)
         self.state = np.full(shape=self.n,fill_value=0)
-        self.GMAX = 10
+        self.GMAX = 15
         #cortical_matrix[index_neuron][synapse_index]
         self.cortical_matrix = np.array(w)
-        self.STDP_RULE ='LOG_RULE'
+        self.STDP_RULE ='ADD'
         self.C = 1#1
         #shape = [output,input]
         self.X = np.full(shape=(self.n,self.n),fill_value=1,dtype=np.float64)
@@ -38,7 +38,7 @@ class network(object):
         self.cnt_bad = 0
         self.time = 0
 
-        self.GMAX = 0.002
+        #self.GMAX = 0.002
 
         self.APLUS = 0.024
 
@@ -240,7 +240,7 @@ class network(object):
                 # w[firingneuron_index][i]
                 # start from the beginning of postsynaptic_train to get the first time that is larger than t1
                 if self.STDP_RULE == 'ADD':
-                    self.cortical_matrix[i,index] -= 0.002
+                    self.cortical_matrix[i,index] -= 0.5
                 if self.STDP_RULE == 'LOG_RULE':
                     self.cortical_matrix[i,index] -= self.learing_rate*self.AMINUS*self.GMAX*self.x_minus[i,index]*math.exp(-(self.firing_time_raster[index][-1]-self.firing_time_raster[i][-1])/self.TAU_MINUS)
                     self.clip_weight(math.fabs(self.cortical_matrix[i,index]))
@@ -249,7 +249,7 @@ class network(object):
                 # w[i][firingneuron_index]
                 if i in connection_in and i != index:
                     if self.STDP_RULE == 'ADD':
-                        self.cortical_matrix[index, i] += 0.002
+                        self.cortical_matrix[index, i] += 0.5
                     if self.STDP_RULE == 'LOG_RULE':
                         self.cortical_matrix[ index, i ] += self.learing_rate *self.APLUS*self.GMAX* self.x_plus[i,index] * math.exp(-(self.firing_time_raster[index][ -1] -self.firing_time_raster[i][ -1]) / self.TAU_PLUS)
                         self.clip_weight(math.fabs(self.cortical_matrix[index, i]))
@@ -514,7 +514,7 @@ class network(object):
         self.spike_delay_count[spike_index] = self.dely_step
         self.spike_delay_count = self.spike_delay_count-1
         self.spike_delay_count[self.spike_delay_count<0] = 0
-        print(self.spike_delay_count)
+        #print(self.spike_delay_count)
 
 
         spike_finished_neuron , spike_finished_index = self.get_fire_finished_neuron(self.V,nextV)
@@ -534,14 +534,14 @@ class network(object):
             self.spike_train_input()
 
         spike_index = np.where(self.spike_delay_count == 1)[0]
-        print(spike_index)
+        #print(spike_index)
         if len(spike_index):
             self.spike_train_output[spike_index] = 1
             self.spikeing_time(self.time, self.time + self.dt, spike_index, nextV, nextmK, nextge, nextCaConcen)
             print(spike_index)
             print('666')
             for i in spike_index:
-                #self.stdp(i)
+                self.stdp(i)
                 self.calcium(i)
                 self.force_cortic(i)
 

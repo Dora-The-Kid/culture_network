@@ -7,6 +7,7 @@ import copy
 
 
 
+
 def small_world_network(n,k,p):
 
     W = np.zeros(shape=(n,n))
@@ -74,7 +75,22 @@ def small_world_network(n,k,p):
     #plt.show()
     return W
 
+def random_gen(n):
 
+    w = np.zeros((n, n), dtype=np.float32)
+
+    p_reccur = np.random.uniform(0, 1, (n, n))
+    row, col = np.diag_indices_from(p_reccur)
+    p_reccur[row, col] = np.zeros(shape=n)
+    w[p_reccur > 0.8] = np.random.normal(3.14, 1.7, size=w[p_reccur > 0.8].shape)
+
+
+    w = np.abs(w)
+    w[0:15, 0:15] = w[0:15, 0:15] * 3.5
+    w[0:15, 16:80] = w[0:15, 16:80] * 1.5
+    w[16:80, 0:15] = w[16:80, 0:15] * 0.8
+    w[16:80, 16:80] = w[16:80, 16:80] * 0.8
+    return w
 
 if __name__ == '__main__':
     small_world_network(10,2,0)

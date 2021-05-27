@@ -6,13 +6,13 @@ def run(dely,w):
 
     Type = np.ones(shape=n)
 
-    T =7000
+    T =10000
     dt = 0.0125
 
     #w = np.loadtxt('Ach_1.txt')
     w = w
     # print(np.sum(w))
-    ratio=6100/np.sum(w)
+    ratio=6300/np.sum(w)
     w = w*ratio
 
     network = re.network(neuron_number=n,type=Type,w=w,dt=dt,external_W=None,dely_step=dely)
@@ -30,6 +30,7 @@ def run(dely,w):
     satge = []
     mK = []
     spike_array = []
+    W_sum = []
 
 
 
@@ -55,6 +56,7 @@ def run(dely,w):
 
 
         network.update()
+        W_sum.append(np.sum(network.cortical_matrix))
         #print(network.Y[:,0])
         V = network.V
         X.append(network.X[5,0])
@@ -84,4 +86,25 @@ def run(dely,w):
     # np.savetxt('reverbrtarion_spike_6000ms_2_stdp.txt',spike)
     #np.savetxt('Ach_spike.txt', spike)
     say = np.array(network.asynrate)
-    return spike,spike_array,voltage
+    W_sum = np.array(W_sum)
+    np.save('W_dely_1ms_stdp',network.cortical_matrix)
+    return spike,spike_array,voltage,W_sum
+
+if __name__ == '__main__':
+    import network_gen
+    #w = network_gen.random_gen(80)
+    #np.save('stdp_test',w)
+    w = np.load('stdp_test.npy')
+    spike,spike_array,voltage,W_sum = run(80,w)
+    np.save('spike_stdp',spike)
+    np.save('spike_array_stdp',spike_array)
+    import matplotlib.pyplot as plt
+    plt.figure()
+    plt.plot(np.arange(voltage.shape[0])*0.0125, voltage, alpha=0.3)
+    plt.figure()
+    plt.scatter(spike[:,0],spike[:,1],cmap='viridis',linewidth=0.5,color="k",marker='.',s=9,alpha=0.5)
+
+    plt.figure()
+    plt.plot(np.arange(voltage.shape[0])*0.0125,W_sum)
+    plt.show()
+

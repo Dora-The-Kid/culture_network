@@ -19,7 +19,7 @@ w[p_reccur>0.8] =np.random.normal(4, 2, size=w[p_reccur > 0.8].shape)
 print(np.sum(w))
 
 w = np.abs(w)
-ratio=4000/np.sum(w)
+ratio=6300/np.sum(w)
 w = w*ratio
 print(np.sum(w))
 
