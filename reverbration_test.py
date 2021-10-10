@@ -40,7 +40,7 @@ w[16:80,16:80] = w[16:80,16:80]*0.8
 #np.savetxt('second_spike.txt',W)
 print(np.nonzero(w)[0].shape)
 
-T =3000
+T =5000
 dt = 0.0125
 import network_gen
 #w = network_gen.small_world_network(80,16,1)
@@ -80,6 +80,7 @@ spike_array = []
 I_input = []
 d_V = []
 background_input = np.zeros(n)
+W_sum = []
 
 print('50***')
 for i in range(step):
@@ -105,6 +106,7 @@ for i in range(step):
 
 
     network.update()
+    W_sum.append(np.sum(network.cortical_matrix))
 
     V = network.V
     X.append(network.X[5,0])
@@ -138,15 +140,20 @@ d_V = np.array(d_V)
 spike = network.spike_record_scatter
 spike = np.array(spike)
 spike_array = np.array(spike_array)
-#np.savetxt('random_network.txt',spike_array)
+np.save('random_network_spike_array.npy',spike_array)
 mK = np.array(mK)
 Ca = np.array(Ca)
 #np.savetxt('reverbrtarion_spike_6000ms_2_stdp.txt',spike)
-#np.savetxt('random_network_spike.txt',spike)
+np.save('random_network_spike.npy',spike)
 say = np.array(network.asynrate)
 print(say.shape)
 print(spike)
 print(spike.shape)
+plt.figure()
+plt.title('W_sum')
+plt.ylabel(' ')
+plt.xlabel('time/ms')
+plt.plot(np.arange(T/dt)*dt,W_sum, alpha = 0.3)
 plt.figure()
 plt.title('dV')
 plt.ylabel('V/mv')

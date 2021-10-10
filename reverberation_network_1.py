@@ -13,7 +13,7 @@ class network(object):
         self.spike_record_scatter = []
         self.short_term_plasticity_use_flag = True
         self.xacc = 1.0e-8
-        self.learing_rate = 1
+        self.learing_rate = 0.5
         self.n = neuron_number
         self.Maxnum_search = 100
         self.type = np.array(type)

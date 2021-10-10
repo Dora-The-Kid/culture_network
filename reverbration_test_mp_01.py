@@ -1,12 +1,13 @@
 import reverberation_network_1 as re
 import numpy as np
+import multiprocessing
 def run(dely,w):
     import matplotlib.pyplot as plt
     n = 80
 
     Type = np.ones(shape=n)
 
-    T =10000
+    T =7500
     dt = 0.0125
 
     #w = np.loadtxt('Ach_1.txt')
@@ -92,8 +93,8 @@ def run(dely,w):
 
 if __name__ == '__main__':
     import network_gen
-    #w = network_gen.random_gen(80)
-    #np.save('stdp_test',w)
+    w = network_gen.random_gen(80)
+    np.save('stdp_test',w)
     w = np.load('stdp_test.npy')
     spike,spike_array,voltage,W_sum = run(80,w)
     np.save('spike_stdp',spike)

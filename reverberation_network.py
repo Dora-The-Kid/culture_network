@@ -18,7 +18,7 @@ class network(object):
         self.Maxnum_search = 100
         self.type = np.array(type)
         self.state = np.full(shape=self.n,fill_value=0)
-        self.GMAX = 50
+        self.GMAX = 100
         #cortical_matrix[index_neuron][synapse_index]
         self.cortical_matrix = np.array(w)
         self.STDP_RULE ='LOG_RULE'
@@ -533,7 +533,7 @@ class network(object):
             print(spike_index)
             print('666')
             for i in spike_index:
-                #self.stdp(i)
+                self.stdp(i)
                 self.calcium(i)
                 self.force_cortic(i)
 

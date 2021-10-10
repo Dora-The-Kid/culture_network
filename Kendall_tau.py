@@ -29,11 +29,12 @@ def Kendall_tau(a,b):
                 ties_onlyin_x += 1
 
     Kendallta1 = (con_pair - dis_pair) / np.sqrt((con_pair + dis_pair + ties_onlyin_x) * (dis_pair + con_pair + ties_onlyin_y))
+    Kendallta1 = dis_pair
     return Kendallta1
 
 def read_file(spike_adress,spike_array_adress):
-    spike = np.load(spike_adress)
-    spike_array = np.load(spike_array_adress)
+    spike = np.loadtxt(spike_adress)
+    spike_array = np.loadtxt(spike_array_adress)
     print(spike.shape,spike_array.shape)
     if spike_array[spike_array==1].shape[0] <= 80 :
         print('######')
@@ -66,12 +67,13 @@ def read_file(spike_adress,spike_array_adress):
     return fig
 def drow(fig:ndarray):
     plt.figure()
-    sns.heatmap(fig,annot=False, center=0.25, cmap='YlGnBu', vmin=0, vmax=1)
+    sns.heatmap(fig, annot=False, center=(np.median(fig)) / 2, cmap='YlGnBu', vmin=np.min(fig), vmax=np.max(fig))
+    #sns.heatmap(fig,annot=False, center=0.25, cmap='YlGnBu', vmin=0, vmax=1)
     plt.ylim(fig.shape[1]+2,0)
     plt.xlim(0,(fig.shape[0])+2)
     plt.title('Kendall_tau')
 if __name__ == '__main__':
-    fig = read_file(spike_adress='spike_stdp.npy',spike_array_adress='spike_array_stdp.npy')
+    fig = read_file(spike_adress='random_network_spike.txt',spike_array_adress='random_network_spike_array.txt')
     drow(fig)
     plt.show()
     
